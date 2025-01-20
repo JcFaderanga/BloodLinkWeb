@@ -16,7 +16,13 @@ const Header = () => {
       <p className="text-lg lg:text-xl font-bold text-primary_blue">
         BloodLink
       </p>
-      {/* <button onClick={handleLogout}>Logout</button> */}
+      {user ? (
+        <button onClick={handleLogout} className="font-bold">
+          Logout
+        </button>
+      ) : (
+        ""
+      )}
     </div>
   );
 };

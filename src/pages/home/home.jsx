@@ -10,7 +10,7 @@ import { useAuth } from "../../context/authContext";
 import useFetchUser from "../../hooks/user_data/useFetchUser";
 import useFetchRequest from "../../hooks/request_data/useFetchRequest";
 import useFetchDonation from "../../hooks/donation_data/useFetchDonation";
-
+import Login from "../auth/Login";
 const Home = () => {
   const [userId, setUserId] = useState(null);
   const [bloodRequestId, setBloodRequest] = useState(null);
@@ -68,7 +68,9 @@ const Home = () => {
       setTypingField(null);
     }
   };
-
+  if (!current_user) {
+    return <Login />;
+  }
   return (
     <>
       <div className="w-full h-11 bg-white flex items-center justify-center lg:justify-start lg:px-4 lg:my-5 md:rounded-2xl">
