@@ -14,7 +14,7 @@ const Header = () => {
   return (
     <div className="h-16 bg-white w-full flex items-center justify-between px-5 ">
       <p className="text-lg lg:text-xl font-bold text-primary_blue">
-        {user? {`${user?.first_name} ${user?.last_name}`:'BloodLink'}
+        {user ? `${user?.first_name} ${user?.last_name}` : "BloodLink"}
       </p>
       {user ? (
         <button onClick={handleLogout} className="font-bold">
