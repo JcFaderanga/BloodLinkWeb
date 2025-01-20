@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "../pages/home/home";
 import NotFound from "../pages/notFound";
 import Login from "../pages/auth/Login";
-import { AuthProvider } from "../context/authContext";
 import ProtectedRoute from "../components/protectedRoute";
 
 const AppRoutes = () => {
@@ -19,7 +18,7 @@ const AppRoutes = () => {
             </ProtectedRoute>
           }
         />
-        <Route path="*" element={<Login />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );
