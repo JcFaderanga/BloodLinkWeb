@@ -24,7 +24,7 @@ const Login = () => {
       });
 
       if (error) throw error;
-      console.log("User data:", data);
+      console.log("User data:", data.user);
     } catch (err) {
       setError(err.message || "Something went wrong");
     } finally {
@@ -45,6 +45,7 @@ const Login = () => {
 
   const updateUserData = async (user) => {
     let res = await getUserData(user?.id);
+
     if (res.success) setUserData(res.data);
   };
 

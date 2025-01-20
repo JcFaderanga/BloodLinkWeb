@@ -11,6 +11,9 @@ import useFetchUser from "../../hooks/user_data/useFetchUser";
 import useFetchRequest from "../../hooks/request_data/useFetchRequest";
 import useFetchDonation from "../../hooks/donation_data/useFetchDonation";
 import Login from "../auth/login";
+import { supabase } from "../../lib/supabase";
+import { useNavigate } from "react-router-dom";
+import { LongDateFormat, DayAndDate } from "../../utils/timeDateFormat";
 const Home = () => {
   const [userId, setUserId] = useState(null);
   const [bloodRequestId, setBloodRequest] = useState(null);
@@ -22,6 +25,17 @@ const Home = () => {
   const { user: selectedUser, fetchUser } = useFetchUser();
   const { bloodRequest, fetchRequest } = useFetchRequest();
   const { bloodDonation, fetchDonation } = useFetchDonation();
+
+  const navigate = useNavigate();
+  if (!current_user) {
+    return <Login />;
+  }
+  // if (!current_user?.super_user) {
+  //   console.log("not authorize");
+  //   alert("You are not authorize for this page.");
+  //   supabase.auth.signOut();
+  //   return;
+  // }
 
   const onSearch = async () => {
     setSearchError(false);
@@ -68,9 +82,7 @@ const Home = () => {
       setTypingField(null);
     }
   };
-  if (!current_user) {
-    return <Login />;
-  }
+
   return (
     <>
       <div className="w-full h-11 bg-white flex items-center justify-center lg:justify-start lg:px-4 lg:my-5 md:rounded-2xl">
@@ -144,9 +156,28 @@ const Home = () => {
           )}
         </div>
 
-        {selectedUser && <ResultBoxUser data={selectedUser} />}
-        {bloodRequest && <ResultBoxRequest data={bloodRequest} />}
-        {bloodDonation && <ResultBoxDonation data={bloodDonation} />}
+        {selectedUser && (
+          <ResultBoxUser
+            data={selectedUser}
+            onSelect={() => navigate(`/userpage/${selectedUser?.id}`)}
+          />
+        )}
+        {bloodRequest && (
+          <ResultBoxRequest
+            data={bloodRequest}
+            onSelect={() =>
+              navigate(`/userpage/${bloodRequest?.blood_request_id}`)
+            }
+          />
+        )}
+        {bloodDonation && (
+          <ResultBoxDonation
+            data={bloodDonation}
+            onSelect={() =>
+              navigate(`/userpage/${bloodDonation?.blood_donation_id}`)
+            }
+          />
+        )}
         {/* {searchError && <h1>Item not found.</h1>} */}
       </div>
     </>
