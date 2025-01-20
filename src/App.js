@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import AppRoutes from './routes/AppRoutes';
 import { SideBar, Header } from './components/navigationBars';
-
+import { AuthProvider } from './context/authContext';
 const App = () => {
   return (
+    <AuthProvider>
     <div className="h-screen w-full flex">
       <SideBar />
       <div className="w-full h-full relative">
@@ -14,6 +15,7 @@ const App = () => {
         </div>
       </div>
     </div>
+    </AuthProvider>
   );
 };
 
