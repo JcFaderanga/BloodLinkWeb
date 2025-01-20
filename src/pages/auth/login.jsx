@@ -25,10 +25,6 @@ const Login = () => {
 
       if (error) throw error;
       console.log("User data:", data);
-
-      if (user) {
-        navigate("/home");
-      }
     } catch (err) {
       setError(err.message || "Something went wrong");
     } finally {
@@ -37,14 +33,11 @@ const Login = () => {
   };
   useEffect(() => {
     supabase.auth.onAuthStateChange((_event, session) => {
-      // console.log("session", session?.user?.id);
-
       if (session) {
         setSession(session);
         setAuth(session?.user);
         updateUserData(session?.user);
       } else {
-        console.log("INVALID SESSION");
         setAuth(null);
       }
     });
@@ -52,7 +45,6 @@ const Login = () => {
 
   const updateUserData = async (user) => {
     let res = await getUserData(user?.id);
-    console.log("APP/_LAYOUT", JSON.stringify(res?.id, null, 2));
     if (res.success) setUserData(res.data);
   };
 
