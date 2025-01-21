@@ -43,6 +43,10 @@ export const ResultBoxRequest = ({ data, onSelect }) => {
         <p> {data?.blood_request_id}</p>
       </div>
       <div className=" py-2 flex md:block">
+        <p className="font-bold">User Id:</p>
+        <p> {data?.profile?.id}</p>
+      </div>
+      <div className=" py-2 flex md:block">
         <p className="font-bold">Firstname:</p>
         <p>{data?.profile?.first_name}</p>
       </div>

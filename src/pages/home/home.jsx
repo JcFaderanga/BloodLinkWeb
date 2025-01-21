@@ -159,14 +159,16 @@ const Home = () => {
         {selectedUser && (
           <ResultBoxUser
             data={selectedUser}
-            onSelect={() => navigate(`/userpage/${selectedUser?.id}`)}
+            onSelect={() => navigate(`/userpage/${selectedUser?.id}/0`)}
           />
         )}
         {bloodRequest && (
           <ResultBoxRequest
             data={bloodRequest}
             onSelect={() =>
-              navigate(`/userpage/${bloodRequest?.blood_request_id}`)
+              navigate(
+                `/userpage/${bloodRequest?.profile?.id}/${bloodRequest?.blood_request_id}`
+              )
             }
           />
         )}

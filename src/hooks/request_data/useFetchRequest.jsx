@@ -10,7 +10,7 @@ const useFetchRequest = () => {
     setLoading(true);
     const { data, error } = await supabase
       .from("blood_request")
-      .select(`*, profile(first_name, last_name, birth_date)`)
+      .select(`*, profile(*)`)
       .eq("blood_request_id", request_id)
       .single();
     if (error) {
