@@ -10,7 +10,7 @@ const useFetchDonation = () => {
     setLoading(true);
     const { data, error } = await supabase
       .from("blood_donation")
-      .select(`*, profile(first_name, last_name,birth_date)`)
+      .select(`*, profile(*)`)
       .eq("blood_donation_id", donation_id)
       .single();
     if (error) {

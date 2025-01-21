@@ -117,7 +117,7 @@ export const TimeAgo = (timestamp) => {
     };
   
 
-    function formatMMDDYYYY(dateString) {
+    export function formatMMDDYYYY(dateString) {
       const date = new Date(dateString); // Parse the date string
       const month = String(date.getMonth() + 1).padStart(2, "0"); // Add 1 to month since it's zero-indexed
       const day = String(date.getDate()).padStart(2, "0");

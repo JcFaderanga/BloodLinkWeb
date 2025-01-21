@@ -1,5 +1,5 @@
 import React from "react";
-import { LongDateFormat } from "../../utils/timeDateFormat";
+import { LongDateFormat, formatMMDDYYYY } from "../../utils/timeDateFormat";
 export const ResultBoxUser = ({ data, onSelect }) => {
   return (
     <div className="border rounded-md px-2 py-2 mt-2 md:flex md:items-center md:justify-evenly">
@@ -21,7 +21,7 @@ export const ResultBoxUser = ({ data, onSelect }) => {
       </div>
       <div className=" py-2 flex md:block">
         <p className="font-bold">Date of birth:</p>
-        <p> {data?.birth_date}3</p>
+        <p> {formatMMDDYYYY(data?.birth_date)}</p>
       </div>
       <div className=" py-2 flex">
         <button
@@ -56,7 +56,7 @@ export const ResultBoxRequest = ({ data, onSelect }) => {
       </div>
       <div className=" py-2 flex md:block">
         <p className="font-bold">Date of birth:</p>
-        <p> {data?.profile?.birth_date}</p>
+        <p> {formatMMDDYYYY(data?.profile?.birth_date)}</p>
       </div>
       <div className=" py-2 flex">
         <button
@@ -78,6 +78,10 @@ export const ResultBoxDonation = ({ data, onSelect }) => {
         <p> {data?.blood_donation_id}</p>
       </div>
       <div className=" py-2 flex md:block">
+        <p className="font-bold">User Id:</p>
+        <p> {data?.profile?.id}</p>
+      </div>
+      <div className=" py-2 flex md:block">
         <p className="font-bold">Firstname:</p>
         <p>{data?.profile?.first_name}</p>
       </div>
@@ -87,7 +91,7 @@ export const ResultBoxDonation = ({ data, onSelect }) => {
       </div>
       <div className=" py-2 flex md:block">
         <p className="font-bold">Date of birth:</p>
-        <p> {data?.profile?.birth_date}3</p>
+        <p> {formatMMDDYYYY(data?.profile?.birth_date)}</p>
       </div>
       <div className=" py-2 flex">
         <button
