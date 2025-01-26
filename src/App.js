@@ -1,4 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import {
+  Route,
+  createBrowserRouter,
+  createRoutesFromElements,
+  RouterProvider,
+} from 'react-router-dom';
 import AppRoutes from './routes/AppRoutes';
 import { SideBar, Header } from './components/navigationBars';
 import { AuthProvider } from './context/authContext';

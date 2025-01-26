@@ -1,7 +1,8 @@
 import React from "react";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../context/authContext";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 const Header = () => {
   const { user } = useAuth();
 
@@ -18,7 +19,7 @@ const Header = () => {
       </p>
       {user ? (
         <button onClick={handleLogout} className="font-bold">
-          Logout
+          <FontAwesomeIcon icon={faArrowRightFromBracket} />
         </button>
       ) : (
         ""
