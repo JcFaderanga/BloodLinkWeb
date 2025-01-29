@@ -6,38 +6,48 @@ import {
   faDroplet,
   faMagnifyingGlass,
 } from "@fortawesome/free-solid-svg-icons";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Link,
-  useNavigate,
-} from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 const SideBar = () => {
-  // const navigate = useNavigate();
-  const goToDashboard = () => {
-    // navigate(`/dashboard`);
-  };
+  const linkClass = ({ isActive }) =>
+    `h-11 w-11 cursor-pointer flex items-center justify-center rounded-xl mb-2 ${
+      isActive ? "bg-[#A5E6FF] text-[#0052a2]" : "hover:bg-[#A5E6FF]"
+    }`;
+
   return (
     <div className="h-full w-16 hidden lg:justify-center lg:flex">
       <div className="block">
-        <div className="flex items-center justify-center  p-3 rounded-xl mb-7">
-          <FontAwesomeIcon icon={faBars} size="xl" color="#0052a2" />
+        {/* Sidebar Header */}
+        <div className="flex items-center justify-center p-3 rounded-xl mb-7">
+          {/* <FontAwesomeIcon icon={faBars} size="xl" color="#0095CD" /> */}
         </div>
-        <div className="h-11 w-11 cursor-pointer flex items-center justify-center bg-[#A5E6FF] rounded-xl mb-2">
-          <FontAwesomeIcon icon={faMagnifyingGlass} size="lg" color="#0095CD" />
-        </div>
-        <div className="h-11 w-11 cursor-pointer flex items-center justify-center rounded-xl mb-2">
-          <button onClick={goToDashboard}>
-            <FontAwesomeIcon icon={faGauge} size="lg" color="gray" />
-          </button>
-        </div>
-        <div className="h-11 w-11 cursor-pointer flex items-center justify-center rounded-xl mb-2">
+
+        {/* Sidebar Links */}
+        <NavLink to={"/"} className={linkClass}>
+          {({ isActive }) => (
+            <FontAwesomeIcon
+              icon={faMagnifyingGlass}
+              size="lg"
+              color={isActive ? "#0052a2" : "gray"}
+            />
+          )}
+        </NavLink>
+
+        <NavLink to={"/Dashboard"} className={linkClass}>
+          {({ isActive }) => (
+            <FontAwesomeIcon
+              icon={faGauge}
+              size="lg"
+              color={isActive ? "#0052a2" : "gray"}
+            />
+          )}
+        </NavLink>
+
+        {/* Non-interactive Icon */}
+        <div className="h-11 w-11 flex items-center justify-center rounded-xl mb-2">
           <FontAwesomeIcon icon={faDroplet} size="lg" color="gray" />
         </div>
       </div>
-      {/* <Link /> */}
     </div>
   );
 };

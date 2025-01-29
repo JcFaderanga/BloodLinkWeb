@@ -159,7 +159,9 @@ const Home = () => {
         {selectedUser && (
           <ResultBoxUser
             data={selectedUser}
-            onSelect={() => navigate(`/userpage/${selectedUser?.id}/0/user`)}
+            onSelect={() =>
+              navigate(`/Search/UserPage/user/${selectedUser?.id}/0`)
+            }
           />
         )}
         {bloodRequest && (
@@ -167,7 +169,7 @@ const Home = () => {
             data={bloodRequest}
             onSelect={() =>
               navigate(
-                `/userpage/${bloodRequest?.profile?.id}/${bloodRequest?.blood_request_id}/request`
+                `/Search/UserPage/request/${bloodRequest?.profile?.id}/${bloodRequest?.blood_request_id}`
               )
             }
           />
@@ -177,7 +179,7 @@ const Home = () => {
             data={bloodDonation}
             onSelect={() =>
               navigate(
-                `/userpage/${bloodDonation?.profile?.id}/${bloodDonation?.blood_donation_id}/donation`
+                `/Search/UserPage/donation/${bloodDonation?.profile?.id}/${bloodDonation?.blood_donation_id}`
               )
             }
           />

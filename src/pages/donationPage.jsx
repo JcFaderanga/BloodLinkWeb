@@ -1,4 +1,4 @@
-import React, { Profiler, useEffect, useState } from "react";
+import React, { Profiler, useEffect, useMemo, useState } from "react";
 
 import useFetchUser from "../hooks/user_data/useFetchUser";
 import useFetchDonation from "../hooks/donation_data/useFetchDonation";
@@ -9,16 +9,17 @@ const DonationPage = ({ donation_id }) => {
   const { bloodRequest, fetchRequest } = useFetchRequest();
 
   useEffect(() => {
-    const fetch = async () => {
-      if (donation_id) {
-        await fetchDonation(donation_id);
-      }
-      if (bloodDonation) {
-        await fetchRequest(bloodDonation?.blood_request_id);
-      }
-    };
-    fetch();
-  }, [donation_id, bloodDonation]);
+    if (donation_id) {
+      fetchDonation(donation_id);
+    }
+  }, [donation_id]);
+
+  useEffect(() => {
+    if (bloodDonation) {
+      fetchRequest(bloodDonation?.blood_request_id);
+    }
+  }, [bloodDonation]);
+
   return (
     <div className="flex-1 lg:px-4 lg:mt-4">
       <div>

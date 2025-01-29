@@ -1,27 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
   Route,
   createBrowserRouter,
   createRoutesFromElements,
   RouterProvider,
 } from 'react-router-dom';
-import AppRoutes from './routes/AppRoutes';
-import { SideBar, Header } from './components/navigationBars';
 import { AuthProvider } from './context/authContext';
+
+import Home from './pages/home/home';
+import MainRoutes from './routes/mainRoutes';
+import UserPage from './pages/userPage';
+import Dashboard from './pages/dashboard/dashboard';
+import NotFound from './pages/notFound';
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route path='/' element={<MainRoutes/>}>
+      <Route index element={<Home/>}/>
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/Search/UserPage/:type/:userId/:subId" element={<UserPage />} />
+      <Route path="*" element={<NotFound />} />
+    </Route>
+  )
+)
 const App = () => {
   return (
     <AuthProvider>
-    <div className="h-screen w-full flex">
-      <SideBar />
-      <div className="w-full h-full relative">
-        <Header />
-        <div className="bg-[url(./assets/image/site-bg.jpg)] h-[calc(100%-70px)] w-full bg-cover bg-no-repeat opacity-30 lg:rounded-tl-3xl"></div>
-        <div className="absolute top-[70px] w-full md:px-16 lg:px-10">    
-          <AppRoutes />
-        </div>
-      </div>
-    </div>
+      <RouterProvider router={router}/>
     </AuthProvider>
+    
   );
 };
 
