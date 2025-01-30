@@ -13,11 +13,12 @@ const UseFetchAllRequest = () => {
         .from("blood_request")
         .select("*, profile(first_name, last_name, blood_type)");
 
-      if (filter === "urgent") {
-        query = query.eq("urgent", true);
-      }
-      if (filter === "approve") {
-        query = query.eq("approve", true);
+      if (filter) {
+        Object.entries(filter).forEach(([key, value]) => {
+          if (value !== "" && value !== null) {
+            query = query.eq(key, value);
+          }
+        });
       }
       const { data, error } = await query;
 

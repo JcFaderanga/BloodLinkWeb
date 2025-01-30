@@ -4,15 +4,26 @@ import RequestRowData from "../../../components/dashboard/request/requestRowData
 import UseFetchAllRequest from "../../../hooks/request_data/useFetchAllRequest";
 
 const Requests = () => {
-  const [filter, setFilter] = useState(null);
+  const [filter, setFilter] = useState({});
   const { requestData, error, loading, FetchRequest } = UseFetchAllRequest();
 
+  console.log(error ? error : "filter", filter);
   useEffect(() => {
     FetchRequest(filter);
   }, [filter]);
 
   const handleFilter = (filterType) => (e) => {
-    setFilter(e.target.checked ? filterType : null);
+    if (filterType === "urgent") {
+      setFilter(e.target.checked ? { ...filter, urgent: true } : null);
+    }
+    if (filterType === "pending") {
+      setFilter(e.target.checked ? { ...filter, pending: "pending" } : null);
+    }
+    if (filterType === "approve") {
+      setFilter(e.target.checked ? { ...filter, approve: true } : null);
+    }
+
+    //setFilter(e.target.checked ? filterType : null);
   };
 
   return (
@@ -40,16 +51,14 @@ const Requests = () => {
         </div>
         <div className="w-full lg:flex">
           {loading ? (
-            <h1>Getting Result...</h1>
+            <h1 className="text-center py-10 font-bold text-gray-400">
+              Getting Result...
+            </h1>
           ) : (
             <div className="w-full lg:w-2/6 h-[650px] border mr-2 rounded overflow-y-scroll">
               {requestData?.length > 0 ? (
                 requestData.map((data, index) => (
-                  <RequestRowData
-                    key={index}
-                    name={`${data.profile.first_name} ${data.profile.last_name}`}
-                    blood_type={data.profile.blood_type}
-                  />
+                  <RequestRowData key={index} requestDate={data} />
                 ))
               ) : (
                 <p className="text-center text-gray-500 p-4">
