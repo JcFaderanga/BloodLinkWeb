@@ -9,14 +9,16 @@ const UseFetchAllRequest = () => {
   const FetchRequest = async (filter) => {
     setLoading(true);
     try {
-      let query = supabase
-        .from("blood_request")
-        .select("*, profile(first_name, last_name, blood_type)");
+      let query = supabase.from("blood_request").select("*, profile(*)");
 
-      if (filter) {
+      if (filter && Object.keys(filter).length > 0) {
         Object.entries(filter).forEach(([key, value]) => {
           if (value !== "" && value !== null) {
-            query = query.eq(key, value);
+            if (key === "document") {
+              query = query.not("document", "is", null); // ✅ Correct way to filter non-null documents
+            } else {
+              query = query.eq(key, value);
+            }
           }
         });
       }

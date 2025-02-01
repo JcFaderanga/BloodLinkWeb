@@ -1,22 +1,25 @@
 import React from "react";
 
-const RequestRowData = ({ requestDate }) => {
+const RequestRowData = ({ requestData, onClick }) => {
   return (
-    <div className="w-full h-24 px-4 py-3 items-center flex cursor-pointer hover:bg-blue-50">
+    <div
+      className="w-full h-24 px-4 py-3 items-center flex cursor-pointer hover:bg-blue-50"
+      onClick={onClick}
+    >
       <div>
         <h2 className="font-bold text-lg text-primary_blue">
-          {`${requestDate?.profile?.first_name} ${requestDate?.profile?.last_name}`}
+          {`${requestData?.profile?.first_name} ${requestData?.profile?.last_name}`}
         </h2>
         <div className="flex">
           {" "}
           <h2 className=" text-primary_gray">
-            Blood type: {requestDate?.profile?.blood_type}
+            Blood type: {requestData?.profile?.blood_type}
           </h2>
           <h2 className=" text-primary_gray">
-            Urgent: {requestDate?.urgent ? "YES" : "NO"}
+            Urgent: {requestData?.urgent ? "YES" : "NO"}
           </h2>
           <h2 className=" text-primary_gray">
-            Approve: {requestDate?.approve ? "YES" : "NO"}
+            Approve: {requestData?.approve ? "YES" : "NO"}
           </h2>
         </div>
       </div>
