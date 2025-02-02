@@ -1,8 +1,14 @@
 import React, { useState } from "react";
 import { DashboardChild, Requests, Verification } from "./components";
-
+import { useAuth } from "../../context/authContext";
+import Login from "../auth/login";
 const Dashboard = () => {
+  const { user } = useAuth();
   const [activeNav, setActiveNav] = useState("Dashboard");
+
+  if (!user) {
+    return <Login />;
+  }
   return (
     <>
       <div className="w-full h-11 bg-white flex items-center justify-evenly lg:justify-start lg:px-4 lg:my-5 md:rounded-2xl ">
@@ -62,7 +68,8 @@ const Dashboard = () => {
           </h4>
         </button>
       </div>
-      <div className="w-full h-[calc(100%-80px)] bg-white overflow-hidden">
+      {/* h-[calc(100%-80px)] */}
+      <div className="w-full h-[80%] bg-white ">
         {activeNav === "Dashboard" && <DashboardChild />}
         {activeNav === "Request" && <Requests />}
         {activeNav === "Verification" && <Verification />}

@@ -8,6 +8,7 @@ const Requests = () => {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [filter, setFilter] = useState({});
   const { requestData, error, loading, FetchRequest } = UseFetchAllRequest();
+  const [requestStatus, setRequestStatus] = useState(null);
   console.log(selectedRequest && "selectedRequest", selectedRequest);
   useEffect(() => {
     FetchRequest(filter);
@@ -22,8 +23,8 @@ const Requests = () => {
       }
       if (filterType === "pending") {
         e.target.checked
-          ? (newFilter.pending = "pending")
-          : delete newFilter.pending;
+          ? (newFilter.approve = false)
+          : delete newFilter.approve;
       }
       if (filterType === "approve") {
         e.target.checked
@@ -42,6 +43,7 @@ const Requests = () => {
 
   const selectedData = (data) => {
     setSelectedRequest(data);
+    setRequestStatus(true);
     console.log("selected data", selectedRequest?.document);
   };
 
@@ -49,6 +51,13 @@ const Requests = () => {
     ? getSupabaseFileUrl(selectedRequest?.document)
     : null;
   console.log("PROFILE", getSupabaseFileUrl(selectedRequest?.profile?.image));
+
+  const handleUpdateStatus = (status) => {
+    if (status === "reject") {
+      setRequestStatus(false);
+    }
+  };
+
   return (
     <div className="w-full bg-white flex py-4 lg:p-4 justify-center">
       <div className="w-full">
@@ -98,41 +107,126 @@ const Requests = () => {
 
           {/* PDF Viewer Section */}
           <div className="hidden lg:flex w-full flex-row rounded ">
-            <div className="w-2/5 px-5 ">
-              <h1 className="font-bold text-primary_blue rounded-xl text-xl py-4 ">
-                Request Details
-              </h1>
-              <div className="py-2 flex items-center">
-                <img
-                  src={getSupabaseFileUrl(selectedRequest?.profile?.image)}
-                  alt="profile"
-                  className="w-20 rounded-full "
-                />
-                <div className="px-4">
-                  <p className="text-2xl font-bold text-primary_gray">{`${selectedRequest?.profile?.first_name}  ${selectedRequest?.profile?.last_name}`}</p>
-                  <span className=" font-bold text-primary_gray">
-                    {" "}
-                    Blood Group:{" "}
-                    <span className="text-red-600">
-                      {selectedRequest?.blood_type}
-                    </span>
-                  </span>
-                </div>
+            <div className="w-1/2 px-5 ">
+              <div className="flex justify-between items-center py-4 ">
+                <h1 className="font-bold text-primary_blue rounded-xl text-xl ">
+                  Request Details
+                </h1>
+                {selectedRequest && (
+                  <h1
+                    className={`font-bold text-lg
+                    ${
+                      selectedRequest && !selectedRequest?.approve
+                        ? "text-orange-400"
+                        : "text-green-600"
+                    }
+                  `}
+                  >
+                    {selectedRequest && !selectedRequest?.approve
+                      ? "Pending for approval"
+                      : "Approve"}
+                  </h1>
+                )}
+
+                {/* <h1
+                  className={`font-bold
+                    ${
+                      selectedRequest?.request_status === "pending"
+                        ? "text-orange-400"
+                        : selectedRequest?.request_status === "complete"
+                        ? "text-green-700"
+                        : ""
+                    }
+                  `}
+                >
+                  {selectedRequest?.request_status}
+                </h1> */}
               </div>
-              <KeyValueRow
-                label="Middle Name:"
-                value={selectedRequest?.middle_name}
-              />
 
-              <KeyValueRow
-                label="Blood Group:"
-                value={selectedRequest?.blood_type}
-              />
+              {selectedRequest ? (
+                <>
+                  <div className="py-2 flex items-center">
+                    <img
+                      src={getSupabaseFileUrl(selectedRequest?.profile?.image)}
+                      alt="profile"
+                      className=" w-20 h-20 rounded-full object-contain"
+                    />
+                    <div className="px-4">
+                      <p className="text-2xl font-bold text-primary_gray">{`${selectedRequest?.profile?.first_name}  ${selectedRequest?.profile?.last_name}`}</p>
+                      <span className=" font-bold text-primary_gray">
+                        {" "}
+                        Blood Group:{" "}
+                        <span className="text-red-600">
+                          {selectedRequest?.blood_type}{" "}
+                          {selectedRequest?.urgent ? "| Urgent" : ""}
+                        </span>
+                      </span>
+                    </div>
+                  </div>
 
-              <KeyValueRow
-                label="Date Requested:"
-                value={NumberDate(selectedRequest?.created_at)}
-              />
+                  <KeyValueRow
+                    label="Middle Name:"
+                    value={selectedRequest?.middle_name}
+                  />
+
+                  <KeyValueRow
+                    label="Gender:"
+                    value={selectedRequest?.profile?.gender}
+                  />
+
+                  <KeyValueRow
+                    label="Request Id"
+                    value={selectedRequest?.blood_request_id}
+                  />
+                  <KeyValueRow
+                    label="Date Requested:"
+                    value={NumberDate(selectedRequest?.created_at)}
+                  />
+                  <KeyValueRow
+                    label="Unit Requested:"
+                    value={selectedRequest?.units}
+                  />
+                  <KeyValueRow
+                    label="Direct Request:"
+                    value={selectedRequest?.direct_request ? "Yes" : "No"}
+                  />
+                  <div className="flex  justify-evenly my-10">
+                    <button
+                      className="py-2 w-full border mx-1 rounded bg-primary_blue text-white font-bold hover:scale-95"
+                      onClick={() => handleUpdateStatus("approve")}
+                    >
+                      Approve
+                    </button>
+                    <button
+                      className="py-2 w-full border border-primary_blue font-bold text-primary_blue mx-1 rounded hover:scale-95"
+                      onClick={() => handleUpdateStatus("reject")}
+                    >
+                      Reject
+                    </button>
+                  </div>
+                  {requestStatus === false ? (
+                    <div>
+                      <h3>Reason for rejection</h3>
+                      <textarea
+                        type=""
+                        placeholder="enter text"
+                        className="border w-full"
+                      />
+                      <button className="px-4 py-1 rounded-lg text-white bg-primary_blue">
+                        Confirm
+                      </button>
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </>
+              ) : (
+                <div>
+                  <h1 className="py-5 font-bold text-gray-300 text-xl text-center">
+                    No Selected Request
+                  </h1>
+                </div>
+              )}
             </div>
 
             {pdfUrl ? (
@@ -147,7 +241,7 @@ const Requests = () => {
                 </div>
               </div>
             ) : (
-              <div className="w-full h-full flex justify-center items-center border rounded-lg bg-gray-50">
+              <div className="w-full h-full flex justify-center items-center border  rounded-lg">
                 <h1 className="font-bold text-2xl text-gray-300">
                   No Attachment
                 </h1>

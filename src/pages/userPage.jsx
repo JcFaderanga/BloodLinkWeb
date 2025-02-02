@@ -97,7 +97,7 @@ const UserPage = () => {
   const [donationSetIsOpen, setIsDonationSetIsOpen] = useState(false);
   const [isRefresh, setRefresh] = useState(false);
   const {
-    user: currectUser,
+    user: currentUser,
     loading: fetchUserLoading,
     fetchUser,
   } = useFetchUser();
@@ -124,7 +124,7 @@ const UserPage = () => {
     return typeof address === "object" && address !== null ? address : null;
   };
 
-  const parsedAddress = parseAddress(currectUser?.address);
+  const parsedAddress = parseAddress(currentUser?.address);
 
   const handleToggleContact = () => setIsContactOpen((prev) => !prev);
   const handleToggleAddress = () => setIsAddressOpen((prev) => !prev);
@@ -155,13 +155,13 @@ const UserPage = () => {
           <div className="w-full flex justify-between items-center ">
             <div className="flex items-center">
               <p className="text-2xl font-bold text-primary_blue">
-                {`${currectUser?.first_name} ${currectUser?.last_name}`}
+                {`${currentUser?.first_name} ${currentUser?.last_name}`}
               </p>
               {isRefresh ? (
                 ``
               ) : (
                 <p className="text-gray-500 px-1">
-                  {currectUser?.verified ? `(Verified)` : `(Unverified)`}
+                  {currentUser?.verified ? `(Verified)` : `(Unverified)`}
                 </p>
               )}
             </div>
@@ -188,28 +188,28 @@ const UserPage = () => {
             </h1>
           ) : (
             <div className="py-4 flex justify-between flex-wrap">
-              <UserInfo label="User Id" value={currectUser?.id} />
+              <UserInfo label="User Id" value={currentUser?.id} />
               <UserInfo
                 label="Blood Type"
-                value={currectUser?.blood_type}
+                value={currentUser?.blood_type}
                 data_val={"blood_type"}
                 selected_id={userId}
                 edit
               />
               <UserInfo
                 label="Age"
-                value={CalculateAge(currectUser?.birth_date)}
+                value={CalculateAge(currentUser?.birth_date)}
               />
               <UserInfo
                 label="Date of Birth"
-                value={currectUser?.birth_date}
+                value={currentUser?.birth_date}
                 data_val={"birth_date"}
                 selected_id={userId}
                 edit
               />
               <UserInfo
                 label="Join Date"
-                value={NumberDate(currectUser?.created_at)}
+                value={NumberDate(currentUser?.created_at)}
               />
             </div>
           )}
@@ -223,7 +223,7 @@ const UserPage = () => {
             <div className="pb-3">
               <h3 className="font-bold text-gray-600">Donor Availability</h3>
               <h4 className="text-gray-600">
-                {currectUser?.donation_availability
+                {currentUser?.donation_availability
                   ? "Available"
                   : "Unavailable"}
               </h4>
@@ -231,13 +231,13 @@ const UserPage = () => {
             <div className="pb-3">
               <h3 className="font-bold text-gray-600">Donor Privacy</h3>
               <h4 className="text-gray-600">
-                {currectUser?.anonymous_donor ? "Anonymous" : "Public"}
+                {currentUser?.anonymous_donor ? "Anonymous" : "Public"}
               </h4>
             </div>
             <div>
               <h3 className="font-bold text-gray-600">Contact Privacy</h3>
               <h4 className="text-gray-600">
-                {currectUser?.public_contact ? "Public" : "Private"}
+                {currentUser?.public_contact ? "Public" : "Private"}
               </h4>
             </div>
           </ToggleSection>
@@ -250,12 +250,12 @@ const UserPage = () => {
             <div className="pb-3">
               <h3 className="font-bold text-gray-600">Email</h3>
               <h4 className="text-gray-600">
-                {currectUser?.email.toLowerCase()}
+                {currentUser?.email.toLowerCase()}
               </h4>
             </div>
             <div>
               <h3 className="font-bold text-gray-600">Contact No.</h3>
-              <h4 className="text-gray-600">+63{currectUser?.phone_number}</h4>
+              <h4 className="text-gray-600">+63{currentUser?.phone_number}</h4>
             </div>
           </ToggleSection>
         </div>
@@ -301,7 +301,7 @@ const UserPage = () => {
       </div>
 
       {/* RIGHT SIDE SCREEN */}
-      {type == "donation" ? <DonationPage donation_id={subId} /> : ""}
+      {type === "donation" ? <DonationPage donation_id={subId} /> : ""}
     </div>
   );
 };

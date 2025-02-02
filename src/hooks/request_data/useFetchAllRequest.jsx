@@ -9,7 +9,10 @@ const UseFetchAllRequest = () => {
   const FetchRequest = async (filter) => {
     setLoading(true);
     try {
-      let query = supabase.from("blood_request").select("*, profile(*)");
+      let query = supabase
+        .from("blood_request")
+        .select("*, profile(*)")
+        .eq("approve", false);
 
       if (filter && Object.keys(filter).length > 0) {
         Object.entries(filter).forEach(([key, value]) => {
@@ -21,6 +24,8 @@ const UseFetchAllRequest = () => {
             }
           }
         });
+      } else {
+        // query = query.eq("approve", false);
       }
       const { data, error } = await query;
 
