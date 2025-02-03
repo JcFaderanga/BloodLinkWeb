@@ -1,6 +1,7 @@
 import React from "react";
 
 const RequestRowData = ({ requestData, onClick }) => {
+  console.log("requestData", requestData);
   return (
     <div
       className="w-full h-24 px-4 py-3 items-center flex cursor-pointer hover:bg-blue-50"
