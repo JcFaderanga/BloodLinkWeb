@@ -30,13 +30,22 @@ const Home = () => {
   if (!current_user) {
     return <Login />;
   }
-  // if (!current_user?.super_user) {
-  //   console.log("not authorize");
-  //   alert("You are not authorize for this page.");
-  //   supabase.auth.signOut();
-  //   return;
-  // }
-
+  if (!current_user?.super_user) {
+    //supabase.auth.signOut();
+    return (
+      <div className="flex bg-red-300 rounded-2xl my-5">
+        <h1 className="text-red-700  py-5 pl-10 pr-4 ">
+          You not authorize to this page.
+        </h1>
+        <button
+          className="text-red-700 font-bold underline"
+          onClick={() => supabase.auth.signOut()}
+        >
+          Log out
+        </button>
+      </div>
+    );
+  }
   const onSearch = async () => {
     setSearchError(false);
 

@@ -32,7 +32,7 @@ const Header = () => {
     ${isActive ? "text-[#0052a2] font-bold" : "text-gray"}`;
   return (
     <div className="">
-      <div className="h-16 bg-white w-full flex items-center justify-between px-5">
+      <div className="h-14 bg-white w-full flex items-center justify-between px-5">
         <button onClick={() => setNav(!nav)} className="lg:hidden">
           <FontAwesomeIcon icon={faBars} size="xl" color="#0052a2" />
         </button>

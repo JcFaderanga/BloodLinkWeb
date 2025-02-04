@@ -2,12 +2,29 @@ import React, { useState } from "react";
 import { DashboardChild, Requests, Verification } from "./components";
 import { useAuth } from "../../context/authContext";
 import Login from "../auth/login";
+import { supabase } from "../../lib/supabase";
 const Dashboard = () => {
   const { user } = useAuth();
   const [activeNav, setActiveNav] = useState("Dashboard");
 
   if (!user) {
     return <Login />;
+  }
+  if (!user?.super_user) {
+    //supabase.auth.signOut();
+    return (
+      <div className="flex bg-red-300 rounded-2xl my-5">
+        <h1 className="text-red-700  py-5 pl-10 pr-4 ">
+          You not authorize to this page.
+        </h1>
+        <button
+          className="text-red-700 font-bold underline"
+          onClick={() => supabase.auth.signOut()}
+        >
+          Log out
+        </button>
+      </div>
+    );
   }
   return (
     <>

@@ -9,8 +9,11 @@ import DonationPage from "./donationPage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faRotateRight } from "@fortawesome/free-solid-svg-icons";
 import useUpdateUser from "../hooks/user_data/useUpdateUser";
+import useFetchPrescreening from "../hooks/prescreening/useFetchPrescreening";
+import { DateTimeFormat } from "../utils/timeDateFormat";
+import UserInformation from "./dashboard/components/userInformataion";
 
-const UserInfo = ({ label, value, edit, data_val, selected_id }) => {
+export const UserInfo = ({ label, value, edit, data_val, selected_id }) => {
   const [enableEdit, setEnableEdit] = useState(false);
   const [data, setData] = useState(value || ""); // Initialize with `value`
 
@@ -35,8 +38,8 @@ const UserInfo = ({ label, value, edit, data_val, selected_id }) => {
   };
 
   return (
-    <div className="pt-4 pr-5">
-      <h3 className="font-bold text-gray-600">{label}</h3>
+    <div className="py-2 px-3 flex">
+      <h3 className="font-bold text-gray-600 w-32">{label}</h3>
       <div className="flex items-center">
         {enableEdit ? (
           <input
@@ -89,47 +92,197 @@ const ToggleSection = ({ title, isOpen, onToggle, children }) => (
     </div>
   </div>
 );
+{
+  /*
+  
+  
+  
+  
+  
+  
+  USER PAGE
+  
+  
+  
+  
+  
+  
+  
+  */
+}
+//prescreening
+const PrescreeningResults = ({ data }) => {
+  return (
+    <div>
+      <h2 className="font-bold py-2 text-xl">Prescreening Results:</h2>
+      <div>
+        {data?.prescreening_data &&
+          Object.entries(data?.prescreening_data).map(
+            ([question, answer], index) => (
+              <div key={index} className="border flex justify-between py-4">
+                <strong className="">{question}</strong>
+                <p
+                  style={{ color: answer ? "green" : "red", margin: 0 }}
+                  className="font-bold px-4"
+                >
+                  {answer ? "Yes" : "No"}
+                </p>
+              </div>
+            )
+          )}
+      </div>
+    </div>
+  );
+};
+const User = ({ userId }) => {
+  const { prescreening, error, loading, fetchPrescreening } =
+    useFetchPrescreening();
+  const [page, setPage] = useState("user");
+  useEffect(() => {
+    fetchPrescreening(userId);
+  }, [userId]);
 
+  return (
+    <>
+      <div className=" mx-2 mt-5">
+        <button
+          className={`bg-white border-b-4 px-7 py-2 rounded-tl-lg ${
+            page === "user" ? "border-primary_blue" : "border-white"
+          }`}
+          onClick={() => setPage("user")}
+        >
+          User Information
+        </button>
+        <button
+          className={`bg-white border-b-4 px-7 py-2 ${
+            page === "prescreening" ? "border-primary_blue" : "border-white"
+          }`}
+          onClick={() => setPage("prescreening")}
+        >
+          Pre-Screening
+        </button>
+        <button
+          className={`bg-white border-b-4 px-7 py-2 ${
+            page === "donation" ? "border-primary_blue" : "border-white"
+          }`}
+          onClick={() => setPage("donation")}
+        >
+          Donation
+        </button>
+        <button
+          className={`bg-white border-b-4 px-7 py-2 rounded-tr-lg ${
+            page === "request" ? "border-primary_blue" : "border-white"
+          }`}
+          onClick={() => setPage("request")}
+        >
+          Request
+        </button>
+      </div>
+
+      <div className=" bg-white w-full px-5 lg:px-10 rounded-xl rounded-tl-none py-5 mb-2  lg:mx-2">
+        {page === "user" && <UserInformation userId={userId} />}
+        {/*
+
+
+       PRESCREENING
+
+
+        */}
+
+        {page === "prescreening" && (
+          <div className="py-4 flex justify-evenly ">
+            <div className="w-1/2">
+              <PrescreeningResults data={prescreening} />
+            </div>
+
+            <div className="  mt-10 w-1/2 px-10">
+              <div
+                className={` border px-10  rounded-xl mb-5 py-5 bg-green-100`}
+              >
+                <h1 className="font-bold">Eligibility Percentage</h1>
+                <h2>{prescreening?.eligibility.toFixed(2)}%</h2>
+              </div>
+              <div className=" border px-10 rounded-xl mb-5 py-5 bg-green-100">
+                <h1 className="font-bold">Condition</h1>
+                <h2>
+                  {prescreening?.eligibility > 80
+                    ? "In Good Condition"
+                    : prescreening?.eligibility < 50
+                    ? "In Good Condition"
+                    : ""}
+                </h2>
+              </div>
+              <div
+                className={` border px-10  rounded-xl mb-5 py-5 bg-green-100`}
+              >
+                <h1 className="font-bold">Recent Pre-Screening update</h1>
+                <h2>{DateTimeFormat(prescreening?.recent_update)}</h2>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </>
+  );
+};
+{
+  /*
+  
+  
+  
+  REQUEST PAGE
+  
+ 
+  
+  
+  */
+}
+const Request = () => {
+  return <div>Request Page</div>;
+};
+{
+  /*
+  
+
+  
+  DONATION PAGE
+  
+    
+  */
+}
+const Donation = ({ subId, userId }) => {
+  return (
+    <div className="bg-white mt-8 px-5 py-5 rounded-2xl">
+      <UserInformation userId={userId} />
+      <DonationPage donation_id={subId} />
+    </div>
+  );
+};
 const UserPage = () => {
   const { userId, subId, type } = useParams();
   const [contactIsOpen, setIsContactOpen] = useState(false);
   const [addressIsOpen, setIsAddressOpen] = useState(false);
   const [donationSetIsOpen, setIsDonationSetIsOpen] = useState(false);
   const [isRefresh, setRefresh] = useState(false);
-  const {
-    user: currentUser,
-    loading: fetchUserLoading,
-    fetchUser,
-  } = useFetchUser();
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchUser(userId);
-  }, [userId, isRefresh]);
+  // const parseAddress = (address) => {
+  //   if (typeof address === "string") {
+  //     try {
+  //       const parsed = JSON.parse(address);
+  //       return typeof parsed === "object" && parsed !== null ? parsed : null;
+  //     } catch {
+  //       return null;
+  //     }
+  //   }
+  //   return typeof address === "object" && address !== null ? address : null;
+  // };
 
-  const handleRefresh = () => {
-    setRefresh(true);
-    console.log("isRefresh", isRefresh);
-    setTimeout(() => setRefresh(false), 500);
-  };
-  const parseAddress = (address) => {
-    if (typeof address === "string") {
-      try {
-        const parsed = JSON.parse(address);
-        return typeof parsed === "object" && parsed !== null ? parsed : null;
-      } catch {
-        return null;
-      }
-    }
-    return typeof address === "object" && address !== null ? address : null;
-  };
+  // const parsedAddress = parseAddress(currentUser?.address);
 
-  const parsedAddress = parseAddress(currentUser?.address);
-
-  const handleToggleContact = () => setIsContactOpen((prev) => !prev);
-  const handleToggleAddress = () => setIsAddressOpen((prev) => !prev);
-  const handleToggleDonationSettings = () =>
-    setIsDonationSetIsOpen((prev) => !prev);
+  // const handleToggleContact = () => setIsContactOpen((prev) => !prev);
+  // const handleToggleAddress = () => setIsAddressOpen((prev) => !prev);
+  // const handleToggleDonationSettings = () =>
+  //   setIsDonationSetIsOpen((prev) => !prev);
 
   // useEffect(() => {
   //   const fetch = async () => {
@@ -141,167 +294,10 @@ const UserPage = () => {
   //   fetch();
   // }, [donation_id]);
   return (
-    <div className="px-2 lg:flex">
-      {/* LEFT SIDE SCREEN */}
-
-      <div className="lg:w-2/4 py-5">
-        <button
-          className="mx-4 mb-5 px-4 py-2 rounded-lg bg-primary_blue text-white font-bold hover:opacity-80 lg:hidden"
-          onClick={() => navigate("/")}
-        >
-          Back to Search
-        </button>
-        <div className=" bg-white px-5 lg:px-10 rounded-xl py-5 mb-2 lg:mx-2">
-          <div className="w-full flex justify-between items-center ">
-            <div className="flex items-center">
-              <p className="text-2xl font-bold text-primary_blue">
-                {`${currentUser?.first_name} ${currentUser?.last_name}`}
-              </p>
-              {isRefresh ? (
-                ``
-              ) : (
-                <p className="text-gray-500 px-1">
-                  {currentUser?.verified ? `(Verified)` : `(Unverified)`}
-                </p>
-              )}
-            </div>
-
-            <div className="flex">
-              <button
-                className="hidden mx-4 px-4 py-1 rounded-lg bg-primary_blue text-white font-bold hover:opacity-80 lg:block"
-                onClick={() => navigate("/")}
-              >
-                Back to Search
-              </button>
-              <button
-                className="bg-gray-200 px-2 py-1 rounded-xl"
-                onClick={handleRefresh}
-              >
-                <FontAwesomeIcon icon={faRotateRight} color="gray" />
-              </button>
-            </div>
-          </div>
-
-          {isRefresh ? (
-            <h1 className="px-4 py-5 w-full mt-4 bg-slate-100 rounded-xl font-bold text-gray-400">
-              Loading data...
-            </h1>
-          ) : (
-            <div className="py-4 flex justify-between flex-wrap">
-              <UserInfo label="User Id" value={currentUser?.id} />
-              <UserInfo
-                label="Blood Type"
-                value={currentUser?.blood_type}
-                data_val={"blood_type"}
-                selected_id={userId}
-                edit
-              />
-              <UserInfo
-                label="Age"
-                value={CalculateAge(currentUser?.birth_date)}
-              />
-              <UserInfo
-                label="Date of Birth"
-                value={currentUser?.birth_date}
-                data_val={"birth_date"}
-                selected_id={userId}
-                edit
-              />
-              <UserInfo
-                label="Join Date"
-                value={NumberDate(currentUser?.created_at)}
-              />
-            </div>
-          )}
-        </div>
-        <div className="lg:flex justify-between ">
-          <ToggleSection
-            title="Donation Settings"
-            isOpen={donationSetIsOpen}
-            onToggle={handleToggleDonationSettings}
-          >
-            <div className="pb-3">
-              <h3 className="font-bold text-gray-600">Donor Availability</h3>
-              <h4 className="text-gray-600">
-                {currentUser?.donation_availability
-                  ? "Available"
-                  : "Unavailable"}
-              </h4>
-            </div>
-            <div className="pb-3">
-              <h3 className="font-bold text-gray-600">Donor Privacy</h3>
-              <h4 className="text-gray-600">
-                {currentUser?.anonymous_donor ? "Anonymous" : "Public"}
-              </h4>
-            </div>
-            <div>
-              <h3 className="font-bold text-gray-600">Contact Privacy</h3>
-              <h4 className="text-gray-600">
-                {currentUser?.public_contact ? "Public" : "Private"}
-              </h4>
-            </div>
-          </ToggleSection>
-
-          <ToggleSection
-            title="Contact Details"
-            isOpen={contactIsOpen}
-            onToggle={handleToggleContact}
-          >
-            <div className="pb-3">
-              <h3 className="font-bold text-gray-600">Email</h3>
-              <h4 className="text-gray-600">
-                {currentUser?.email.toLowerCase()}
-              </h4>
-            </div>
-            <div>
-              <h3 className="font-bold text-gray-600">Contact No.</h3>
-              <h4 className="text-gray-600">+63{currentUser?.phone_number}</h4>
-            </div>
-          </ToggleSection>
-        </div>
-
-        <ToggleSection
-          title="Address Details"
-          isOpen={addressIsOpen}
-          onToggle={handleToggleAddress}
-        >
-          <div className=" lg:flex lg:justify-between">
-            <div className="pb-3">
-              <h3 className="font-bold text-gray-600">Street</h3>
-              <h4 className="text-gray-600">
-                {parsedAddress?.street || "Unknown"}
-              </h4>
-            </div>
-            <div className="pb-3">
-              <h3 className="font-bold text-gray-600">Region</h3>
-              <h4 className="text-gray-600">
-                {parsedAddress?.region || "Unknown"}
-              </h4>
-            </div>
-            <div className="pb-3">
-              <h3 className="font-bold text-gray-600">Province</h3>
-              <h4 className="text-gray-600">
-                {parsedAddress?.province || "Unknown"}
-              </h4>
-            </div>
-            <div className="pb-3">
-              <h3 className="font-bold text-gray-600">City</h3>
-              <h4 className="text-gray-600">
-                {parsedAddress?.city || "Unknown"}
-              </h4>
-            </div>
-            <div className="pb-3">
-              <h3 className="font-bold text-gray-600">Barangay</h3>
-              <h4 className="text-gray-600">
-                {parsedAddress?.barangay || "Unknown"}
-              </h4>
-            </div>
-          </div>
-        </ToggleSection>
-      </div>
-
-      {/* RIGHT SIDE SCREEN */}
-      {type === "donation" ? <DonationPage donation_id={subId} /> : ""}
+    <div className="px-2">
+      {type === "user" && <User userId={userId} />}
+      {type === "donation" && <Donation subId={subId} userId={userId} />}
+      {type === "request" && <Request />}
     </div>
   );
 };

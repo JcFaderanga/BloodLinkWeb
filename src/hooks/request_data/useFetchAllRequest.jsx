@@ -9,23 +9,21 @@ const UseFetchAllRequest = () => {
   const FetchRequest = async (filter) => {
     setLoading(true);
     try {
-      let query = supabase
-        .from("blood_request")
-        .select("*, profile(*)")
-        .eq("approve", false);
-
+      let query = supabase.from("blood_request").select("*, profile(*)");
       if (filter && Object.keys(filter).length > 0) {
         Object.entries(filter).forEach(([key, value]) => {
           if (value !== "" && value !== null) {
             if (key === "document") {
-              query = query.not("document", "is", null); // ✅ Correct way to filter non-null documents
+              query = query
+                .neq("request_status", "reject")
+                .not("document", "is", null);
             } else {
               query = query.eq(key, value);
             }
           }
         });
       } else {
-        // query = query.eq("approve", false);
+        query = query.eq("request_status", "pending");
       }
       const { data, error } = await query;
 

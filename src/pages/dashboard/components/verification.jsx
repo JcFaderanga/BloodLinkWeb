@@ -5,34 +5,46 @@ import UseFetchAllVerification from "../../../hooks/verification_data/useFetchAl
 import { getSupabaseFileUrl } from "../../../utils/fileUtils";
 import { DayAndDate, NumberDate } from "../../../utils/timeDateFormat";
 import { supabase } from "../../../lib/supabase";
+import { useAuth } from "../../../context/authContext";
+import useCreateNotification from "../../../hooks/notification/useCreateNotification";
+
 const Verification = () => {
+  const { user } = useAuth();
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [filter, setFilter] = useState({});
+  const [rejectNotes, setRejectNotes] = useState(null);
+  const [refresh, setRefresh] = useState(false);
+  const [rejectConfirm, setRejectConfirm] = useState(false);
+  const [requestResult, setRequestResult] = useState(null);
   const { verificationData, error, loading, FetchVerification } =
     UseFetchAllVerification();
+  const { insertNotif } = useCreateNotification();
   console.log("verificationData", verificationData);
   const [requestStatus, setRequestStatus] = useState(null);
   console.log(selectedRequest && "selectedRequest", selectedRequest);
   useEffect(() => {
     FetchVerification(filter);
   }, [filter]);
-
+  useEffect(() => {
+    if (refresh) {
+      FetchVerification(filter);
+      setSelectedRequest(null);
+      setRefresh(false);
+    }
+  }, [refresh]);
   const handleFilter = (filterType) => (e) => {
     setFilter((prevFilter) => {
       const newFilter = { ...prevFilter };
 
-      if (filterType === "urgent") {
-        e.target.checked ? (newFilter.urgent = true) : delete newFilter.urgent;
-      }
       if (filterType === "pending") {
         e.target.checked
-          ? (newFilter.approve = false)
-          : delete newFilter.approve;
+          ? (newFilter.status = "pending")
+          : delete newFilter.status;
       }
       if (filterType === "approve") {
         e.target.checked
-          ? (newFilter.approve = true)
-          : delete newFilter.approve;
+          ? (newFilter.status = "approve")
+          : delete newFilter.status;
       }
       if (filterType === "attachment") {
         e.target.checked
@@ -57,7 +69,7 @@ const Verification = () => {
 
   const handleUpdateStatus = async (status) => {
     if (status === "approve") {
-      const { error: verficationErr } = await supabase
+      const { error: verificationErr } = await supabase
         .from("verification")
         .update({ status: "approve" })
         .eq("id", selectedRequest?.id);
@@ -66,17 +78,58 @@ const Verification = () => {
         .from("profile")
         .update({ verified: true })
         .eq("id", selectedRequest?.id);
-    }
-    if (status === "reject") {
-      setRequestStatus(false);
-    }
-  };
 
+      insertNotif({
+        data: {
+          status: "approve",
+          verification_id: selectedRequest?.verification_id,
+          user: selectedRequest?.profile?.id,
+        },
+        notification_type: "verification",
+        receiver_id: selectedRequest?.profile?.id,
+      });
+    }
+    setRefresh(true);
+    setRequestResult("approve");
+
+    resetRequestResult();
+  };
+  const handleConfirmRejection = async () => {
+    const { error } = await supabase
+      .from("verification")
+      .update({
+        handle_by: user?.id,
+        reject_notes: rejectNotes,
+        status: "reject",
+      })
+      .eq("verification_id", selectedRequest?.verification_id);
+
+    if (error) throw new Error(error.message);
+    insertNotif({
+      data: {
+        status: "reject",
+        verification_id: selectedRequest?.verification_id,
+        user: selectedRequest?.profile?.id,
+      },
+      notification_type: "verification",
+      receiver_id: selectedRequest?.profile?.id,
+    });
+    setRefresh(true);
+    setRequestResult("reject");
+
+    // Clear input values after update
+    setRejectNotes(null);
+    setRejectConfirm(false);
+
+    resetRequestResult();
+  };
+  const resetRequestResult = () => {
+    setTimeout(() => setRequestResult(false), 1500);
+  };
   return (
     <div className="w-full bg-white flex py-4 lg:p-4 justify-center">
       <div className="w-full">
         <div className="flex overflow-scroll pb-4 text-nowrap lg:overflow-hidden">
-          <RequestFilterBox label="Urgent" onChange={handleFilter("urgent")} />
           <RequestFilterBox
             label="Approved requests"
             onChange={handleFilter("approve")}
@@ -89,10 +142,12 @@ const Verification = () => {
             label="With Attachment"
             onChange={handleFilter("attachment")}
           />
-          <RequestFilterBox
-            label="Last 3 days"
-            onChange={handleFilter("last3days")}
-          />
+          <button
+            className="px-7 font-bold text-primary_blue bg-blue-100 rounded-xl"
+            onClick={() => setRefresh(true)}
+          >
+            Refresh
+          </button>
         </div>
         <div className="w-full lg:flex">
           {loading ? (
@@ -157,14 +212,36 @@ const Verification = () => {
                 </h1> */}
               </div>
 
-              {selectedRequest ? (
+              {requestResult ? (
+                <div className="w-full flex justify-center">
+                  <h1
+                    className={`text-white font-bold ${
+                      requestResult === "approve"
+                        ? "bg-green-500"
+                        : "bg-red-500"
+                    } px-7 py-4 w-full rounded-xl`}
+                  >
+                    {requestResult === "approve"
+                      ? "Verification Approved"
+                      : "Verification Rejected"}
+                  </h1>
+                </div>
+              ) : selectedRequest ? (
                 <>
                   <div className="py-2 flex items-center">
-                    <img
-                      src={getSupabaseFileUrl(selectedRequest?.profile?.image)}
-                      alt="profile"
-                      className=" w-20 h-20 rounded-full object-contain"
-                    />
+                    {selectedRequest?.profile?.image ? (
+                      <img
+                        src={getSupabaseFileUrl(
+                          selectedRequest?.profile?.image
+                        )}
+                        alt="Profile"
+                        className=" w-20 h-20 rounded-full object-contain"
+                      />
+                    ) : (
+                      <div className="bg-gray-200 w-20 h-20 rounded-full flex justify-center items-center font-bold text-gray-400">
+                        N/A
+                      </div>
+                    )}
                     <div className="px-4">
                       <p className="text-2xl font-bold text-primary_gray">{`${selectedRequest?.profile?.first_name}  ${selectedRequest?.profile?.last_name}`}</p>
                       <span className=" font-bold text-primary_gray">
@@ -217,8 +294,12 @@ const Verification = () => {
                         type=""
                         placeholder="enter text"
                         className="border w-full"
+                        onChange={(e) => setRejectNotes(e.target.value)}
                       />
-                      <button className="px-4 py-1 rounded-lg text-white bg-primary_blue">
+                      <button
+                        className="px-4 py-1 rounded-lg text-white bg-primary_blue"
+                        onClick={handleConfirmRejection}
+                      >
                         Confirm
                       </button>
                     </div>

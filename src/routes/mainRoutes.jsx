@@ -11,7 +11,7 @@ const MainRoutes = () => {
           <Header />
           <div className="relative bg-cover bg-no-repeat w-full h-[calc(100%-70px)] lg:flex lg:rounded-tl-3xl">
             <div className="absolute inset-0 bg-[url(./assets/image/site-bg.jpg)] bg-cover bg-no-repeat opacity-40 pointer-events-none lg:rounded-tl-3xl"></div>
-            <div className=" w-full md:px-16 lg:px-10 relative z-10">
+            <div className=" w-full md:px-16 lg:px-4 relative z-10">
               <Outlet />
             </div>
           </div>
