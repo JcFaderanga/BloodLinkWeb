@@ -200,7 +200,7 @@ const User = ({ userId }) => {
                 className={` border px-10  rounded-xl mb-5 py-5 bg-green-100`}
               >
                 <h1 className="font-bold">Eligibility Percentage</h1>
-                <h2>{prescreening?.eligibility.toFixed(2)}%</h2>
+                <h2>{prescreening?.eligibility}%</h2>
               </div>
               <div className=" border px-10 rounded-xl mb-5 py-5 bg-green-100">
                 <h1 className="font-bold">Condition</h1>

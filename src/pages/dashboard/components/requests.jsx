@@ -102,7 +102,11 @@ const Requests = () => {
       if (status === "approve") {
         const { error } = await supabase
           .from("blood_request")
-          .update({ approve: true, handle_by: user?.id })
+          .update({
+            approve: true,
+            request_status: "approve",
+            handle_by: user?.id,
+          })
           .eq("blood_request_id", selectedRequest?.blood_request_id);
 
         if (error) throw new Error(error.message);
